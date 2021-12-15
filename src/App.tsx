@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import ToDoList, {ListItem} from "./Components/ToDoList";
+import React, { useEffect, useState } from "react";
+import Layout from "./Components/Layout";
 
-function App() {
+const App: React.FC=():JSX.Element=> {
+    const [list, setList]=useState<ListItem[]>([])
+
+    const handleAddItem=({id, title}:ListItem)=>{
+        setList(prevState => {
+            const newSt=[...prevState]
+            newSt.push({
+                id, title
+            })
+            return newSt
+        })
+    }
+
+    useEffect(()=>{
+        fetch('https://jsonplaceholder.typicode.com/todos')
+            .then(response => response.json())
+            .then((json) =>{
+                setList(json)
+            })
+    }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <Layout style={{background:"Brown"}}>
+            <ToDoList
+                list={list}
+                handleAddItem={handleAddItem}/>
+        </Layout>
     </div>
   );
 }
